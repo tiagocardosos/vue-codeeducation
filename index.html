@@ -32,7 +32,7 @@
 
             <div v-if="activedView == 0">
                 <p class="text-right">
-                  <span class="label" :class="{'label-danger': totalBills, 'label-success' : !totalBills }">{{ status }}</span>
+                  <span class="label" :class="{'label-success': status === 0, 'label-danger': status > 0, 'label-default': status === false}">{{ status | statusGeneral }}</span>
                 </p>
                 <table class="table table-striped table-bordered">
                     <thead>
@@ -57,7 +57,7 @@
                             </td>
                             <td class="text-center">
                               <a href="#" @click.prevent="changeDone(o)" class="btn btn-default btn-xs"><i class="fa" :class="{'fa-thumbs-o-up': o.done, 'fa-thumbs-o-down': !o.done}"></i></a>
-                              <a href="#" @click.prevent="removeBill(index)" class="btn btn-default btn-xs"><i class="fa fa-remove"></i></a>
+                              <a href="#" @click.prevent="removeBill(o)" class="btn btn-default btn-xs"><i class="fa fa-remove"></i></a>
                               <a href="#" @click.prevent="loadBill(o)" class="btn btn-default btn-xs">Editar</a>
                             </td>
                         </tr>

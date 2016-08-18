@@ -1,3 +1,25 @@
+Vue.filter('statusGeneral', function(value){
+
+  if(value === false){
+    return "Nenhuma conta cadastrada!"
+  }
+
+  if(!value){
+    return "Nenhuma conta para pagar!"
+  }else {
+      return "Existem "+value+" contas para serem pagas!"
+  }
+
+})
+
+Vue.filter('doneLabel', function(value){
+  if(value == 0){
+    return 'Não paga'
+  }else{
+    return 'Paga'
+  }
+})
+
 var app = new Vue({
   el: "#app",
   data: {
@@ -21,33 +43,34 @@ var app = new Vue({
       {id: 1, name: 'Criar Conta'},
       {id: 0, name: 'Listar Conta'},
     ],
-    activedView: 1,
+    activedView: 0,
     formType: '',
     title: 'Contas a Pagar',
     bills: [
-      {date_due: '20/08/2016', name: 'Conta de luz', value: 39.5, done: 1},
-      {date_due: '15/08/2016', name: 'Conta de água', value: 99.8, done: 0},
-      {date_due: '16/08/2016', name: 'Conta de telefone', value: 363.3, done: 1},
-      {date_due: '20/08/2016', name: 'Supermercado', value: 900, done: 0},
-      {date_due: '10/08/2016', name: 'Cartão de crédito', value: 2220.5, done: 0},
-      {date_due: '10/08/2016', name: 'Empréstimo', value: 1525.5, done: 0},
-      {date_due: '12/08/2016', name: 'Gasolina', value: 125.5, done: 1},
+      {date_due: '20/08/2016', name: 'Conta de luz', value: 39.5, done: true},
+      {date_due: '15/08/2016', name: 'Conta de água', value: 99.8, done: false},
+      {date_due: '16/08/2016', name: 'Conta de telefone', value: 363.3, done: true},
+      {date_due: '20/08/2016', name: 'Supermercado', value: 900, done: false},
+      {date_due: '10/08/2016', name: 'Cartão de crédito', value: 2220.5, done: true},
+      {date_due: '10/08/2016', name: 'Empréstimo', value: 1525.5, done: false},
+      {date_due: '12/08/2016', name: 'Gasolina', value: 125.5, done: true},
     ]
   },
   computed: {
     status: function()
     {
-      this.totalBills = 0;
+      if(!this.bills.length){
+        return false
+      }
 
-      for(var i in this.bills)
-      {
-        if(!this.bills[i].done)
-        {
-          this.totalBills++
+      var count = 0
+      for(var i in this.bills){
+        if(!this.bills[i].done){
+          count++
         }
       }
 
-      return !this.totalBills ? "Sem contas a pagar": "Existem "+this.totalBills+" contas a serem pagas"
+      return count
     }
   },
   methods: {
@@ -70,12 +93,15 @@ var app = new Vue({
       this.activedView = 1
       this.formType = 'update'
     },
-    removeBill: function(index){
-      this.bills.splice(index, 1)
+    removeBill: function(bill){
+      if(confirm('Deseja excluir essa conta?')){
+        this.bills.$remove(bill)
+      }
+
     },
     changeDone: function(bill){
       this.bill = bill
-      this.bill.done = bill.done == 1 ? 0 : 1
+      this.bill.done = bill.done == true ? false : true
       this.clearForm()
 
     },
@@ -87,13 +113,5 @@ var app = new Vue({
         done: 0
       }
     }
-  }
-})
-
-Vue.filter('doneLabel', function(value){
-  if(value == 0){
-    return 'Não paga'
-  }else{
-    return 'Paga'
   }
 })
